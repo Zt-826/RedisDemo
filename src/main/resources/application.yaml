@@ -1,0 +1,29 @@
+server:
+  # 应用服务 WEB 访问端口
+  port: 58080
+
+spring:
+  application:
+    name: RedisDemo
+
+  # 数据源信息
+  datasource:
+    url: jdbc:mysql://localhost:3306/test?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+
+  # redis信息
+  redis:
+    # Redis服务器地址
+    host: 192.168.31.249
+    # Redis服务器连接端口
+    port: 6379
+    # Redis服务器连接密码（默认为空）
+    #    password:
+    # 连接超时时间（毫秒）
+    timeout: 1200
+
+mybatis:
+  mapper-locations: classpath:mappers/*.xml
