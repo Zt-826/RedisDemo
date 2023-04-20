@@ -22,8 +22,8 @@ public class GsonUtil {
      * @param <T>   泛型
      * @return Object
      */
-    public static <T> T toObject(String json, Class<T> clazz) {
-        return getGson().fromJson(json, clazz);
+    public static <T> T toObject(Object json, Class<T> clazz) {
+        return getGson().fromJson(String.valueOf(json), clazz);
     }
 
     /**
