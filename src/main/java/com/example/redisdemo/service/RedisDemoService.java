@@ -6,12 +6,17 @@ import com.example.redisdemo.mapper.RedisDemoMapper;
 import com.example.redisdemo.utils.ExpireUtil;
 import com.example.redisdemo.utils.GsonUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RBlockingDeque;
+import org.redisson.api.RDelayedQueue;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -19,6 +24,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class RedisDemoService {
+    private static final String DELAY_QUEUE = "delay_queue";
+
     @Resource
     private RedisDemoMapper mapper;
 
@@ -111,5 +118,24 @@ public class RedisDemoService {
     @DistributedLock(lockName = "deleteCountLock", expire = 5, timeUnit = TimeUnit.MINUTES)
     public void deleteCountWithAnnotation(String goodId) {
         mapper.deleteCount(goodId);
+    }
+
+    /**
+     * 向延迟队列中加入对象
+     */
+    public void addDelay() {
+        RBlockingDeque<Object> blockingDeque = redissonClient.getBlockingDeque(DELAY_QUEUE);
+        RDelayedQueue<Object> delayedQueue = redissonClient.getDelayedQueue(blockingDeque);
+
+        List<User> users = Arrays.asList(new User("1", "Alice"),
+                new User("2", "Bob"),
+                new User("3", "Celina"));
+        int delay = 5;
+        for (User user : users) {
+            log.info("Begin to offer user to delayed queue {}:{} at {}", user.getId(), user.getName(),
+                    LocalDateTime.now());
+            delayedQueue.offer(user, delay, TimeUnit.SECONDS);
+            delay += 5;
+        }
     }
 }

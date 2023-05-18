@@ -55,4 +55,12 @@ public class RedisDemoController {
     public void deleteCountWithAnnotation(@PathVariable String goodId) {
         redisDemoService.deleteCountWithAnnotation(goodId);
     }
+
+    /**
+     * 加入延迟队列
+     */
+    @RequestMapping("/addDelay")
+    public void addDelay() {
+        redisDemoService.addDelay();
+    }
 }
